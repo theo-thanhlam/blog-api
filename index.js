@@ -56,8 +56,7 @@ app.get("/post/:id", (req, res) => {
 });
 
 app.put("/post", uploadMiddleware.single("file"), async (req, res) => {
-  // res.json({ test: 200, fileIs: req.file });
   updatePost(req, res);
 });
 
-app.listen(80);
+app.listen(3001);
