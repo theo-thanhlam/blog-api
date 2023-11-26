@@ -1,15 +1,27 @@
 const User = require("../models/User.models");
 const connectDb = require("../utils/database.utils");
+const bcrypt = require('bcryptjs')
+
+const SALT = bcrypt.genSaltSync(10);
+
 
 async function register(req, res) {
     try {
         await connectDb();
-        const {email, password} = req.body;
-        const userDoc = await User.create({email, password});
+        const {name,email, password} = req.body;
+        let userExist = await User.findOne({email});
+        if(userExist !== null) return res.status(400).json({msg:"Existed"});
 
-        return res.status(200).json(userDoc)
+        await User.create(
+        {   
+            name,
+            email, 
+            password:bcrypt.hashSync(password, SALT)
+        });
+
+        return res.status(200).json({msg:"Create Successfully"})
     } catch (error) {
-        return res.status(400).json({msg:"Email is registered"})
+        return res.status(400).json(error);
     }
     
 }

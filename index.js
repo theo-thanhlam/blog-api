@@ -1,19 +1,63 @@
 const express = require("express");
 const app = express();
-const cors = require('cors');
+const cors = require("cors");
 const register = require("./controllers/register.controller");
+const login = require("./controllers/login.controller");
+const cookiesParser = require("cookie-parser");
+const loginTokenAuth = require("./auth/loginToken.auth");
+const logout = require("./controllers/logout.controller");
+const createPost = require("./controllers/createpost.controller");
+const getPosts = require("./controllers/getpost.controller");
+const multer = require("multer");
+const getPostById = require("./controllers/getpostbyid.controller");
+const updatePost = require("./controllers/updatepost.controller");
+const uploadMiddleware = multer({
+  dest: "uploads/",
+  limits: {
+    fieldSize: 25 * 1024 * 1024,
+  },
+});
 
-app.use(cors());
-app.use(express.json())
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(express.json());
+app.use(cookiesParser());
+app.use("/uploads", express.static(__dirname + "/uploads"));
 
+app.get("/", (req, res) => {
+  res.json({ msg: "Server opens" });
+});
 
-app.get("/" , (req,res)=>{
-    res.json({msg:"Server opens"});
-})
+app.post("/register", (req, res) => {
+  register(req, res);
+});
 
-app.post("/register", (req,res) => {
-    register(req,res)
+app.post("/login", (req, res) => {
+  login(req, res);
+});
 
-})
-//mongodb+srv://phatlam:uNe2Wz4VbYkqk9Mv@cluster0.fodzgmy.mongodb.net/?retryWrites=true&w=majority
-app.listen(3001)
+app.get("/profile", (req, res) => {
+  loginTokenAuth(req, res);
+});
+
+app.post("/logout", (req, res) => {
+  logout(req, res);
+});
+
+app.post("/create-post", uploadMiddleware.single("file"), (req, res) => {
+  createPost(req, res);
+});
+
+app.get("/post", (req, res) => {
+  getPosts(req, res);
+});
+
+app.get("/post/:id", (req, res) => {
+  getPostById(req, res);
+});
+
+app.put("/post", uploadMiddleware.single("file"), async (req, res) => {
+  // res.json({ test: 200, fileIs: req.file });
+  updatePost(req, res);
+});
+
+app.listen(3001);
