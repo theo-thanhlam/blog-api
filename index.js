@@ -60,4 +60,4 @@ app.put("/post", uploadMiddleware.single("file"), async (req, res) => {
   updatePost(req, res);
 });
 
-app.listen(3001);
+app.listen(80);
