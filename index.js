@@ -18,7 +18,7 @@ const uploadMiddleware = multer({
   },
 });
 
-app.use(cors({ credentials: true, origin: `${process.env.CLIENT_URI}` }));
+app.use(cors({ credentials: true, origin: "*" }));
 app.use(express.json());
 app.use(cookiesParser());
 app.use("/uploads", express.static(__dirname + "/uploads"));
