@@ -8,7 +8,7 @@ const updatePost = require("../controllers/updatepost.controller");
 const router = express.Router();
 router.use(express.json());
 
-router.post("/create", [requireLogin, upload.single("file")], (req, res) => {
+router.post("/create", [upload.single("file")], (req, res) => {
   createPost(req, res);
 });
 
