@@ -28,7 +28,7 @@ async function login(req, res) {
     );
     return res.status(200).cookie("loginToken", loginToken).json({
       id: userDoc._id,
-      email,
+      name: userDoc.name,
     });
   } catch (error) {
     return res.status(400).json({ msg: "Error Login", err: error });

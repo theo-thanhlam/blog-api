@@ -3,19 +3,13 @@ const fs = require("fs");
 const Post = require("../models/Post.models");
 const connectDb = require("../utils/database.utils");
 const jwt = require("jsonwebtoken");
+const { updateImage } = require("../handlers/image.handlers");
 
 async function updatePost(req, res) {
   try {
     await connectDb();
-    let newPath = null;
-    if (req.file) {
-      const { originalname, path } = req.file;
+    const file = req.file;
 
-      const parts = originalname.split(".");
-      const ext = parts[parts.length - 1]; //Get file extension
-      newPath = `${path}.${ext}`; //New path
-      fs.renameSync(path, newPath); //Change current file path to new Path
-    }
     const { loginToken } = req.cookies;
     jwt.verify(loginToken, process.env.LOGIN_SECRET, {}, async (err, info) => {
       if (err) throw err;
@@ -26,16 +20,18 @@ async function updatePost(req, res) {
       if (!isAuthor) {
         return res.status(400).json("You are not the author of this post");
       }
+      const newPath = await updateImage(postDoc.cover, file);
+      // console.log(postDoc.cover);
       await postDoc.updateOne({
         title,
         content,
-        cover: newPath ? newPath : postDoc.cover,
+        cover: newPath ? newPath.coverUrl : postDoc.cover,
       });
 
       return res.status(200).json("Updated Post");
     });
   } catch (error) {
-    return res.status(200).json("error");
+    return res.status(400).json("error");
   }
 }
 
