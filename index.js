@@ -17,7 +17,6 @@ const authRoutes = require("./routes/auth.routes");
 app.use(cors(corsConfig));
 app.use(express.json());
 app.use(cookiesParser());
-app.use("/uploads", express.static(__dirname + "/uploads"));
 
 //Routes
 app.use("/", authRoutes);
