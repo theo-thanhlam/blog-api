@@ -12,11 +12,18 @@ const { corsConfig } = require("./config/cors.config");
 //Routes
 const postRoutes = require("./routes/post.routes");
 const authRoutes = require("./routes/auth.routes");
+const cookieSession = require("cookie-session");
 
 //App setting
 app.use(cors(corsConfig));
 app.use(express.json());
 app.use(cookiesParser());
+app.enable("trust proxy");
+app.use(
+  cookieSession({
+    sameSite: "none",
+  })
+);
 
 //Routes
 app.use("/", authRoutes);
